@@ -1,0 +1,5 @@
+课程（课程id：varchar(4)，课程名:varchar(10)，学分:int(2)，学时:int(2)，开课时间:date，开课地点:varchar(10)等）
+学生（学生id：varchar(10)，学生姓名:varchar(10)，性别:enum，年龄:int(2)，专业:varchar(10)等）
+教师（id:varchar(8)，姓名:varchar(10)，性别:enum，年龄:int(2)，所属学院，职称，学历等）
+学院（id，学院名，专业名，专业编号）
+选修（课程id，学生id，教师id，成绩等）

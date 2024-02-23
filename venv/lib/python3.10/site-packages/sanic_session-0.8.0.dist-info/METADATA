@@ -1,0 +1,108 @@
+Metadata-Version: 2.1
+Name: sanic-session
+Version: 0.8.0
+Summary: Provides server-backed sessions for Sanic using Redis, Memcache and more.
+Home-page: http://github.com/subyraman/sanic_session
+Author: Suby Raman, Mikhail Kashkin
+Author-email: m@xen.ru
+License: MIT
+Keywords: sessions,sanic,redis,memcache
+Platform: UNKNOWN
+Classifier: Framework :: AsyncIO
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Classifier: Topic :: Internet :: WWW/HTTP :: Session
+Description-Content-Type: text/markdown
+Requires-Dist: sanic
+Requires-Dist: ujson
+Provides-Extra: aiomcache
+Requires-Dist: aiomcache (>=0.5.2) ; extra == 'aiomcache'
+Provides-Extra: aioredis
+Requires-Dist: aioredis (>=1.0.0) ; extra == 'aioredis'
+Provides-Extra: dev
+Requires-Dist: pytest ; extra == 'dev'
+Requires-Dist: aiohttp ; extra == 'dev'
+Requires-Dist: pytest-asyncio ; extra == 'dev'
+Requires-Dist: pytest-mock ; extra == 'dev'
+Requires-Dist: pytest-cov ; extra == 'dev'
+Requires-Dist: wheel ; extra == 'dev'
+Requires-Dist: sphinx ; extra == 'dev'
+Requires-Dist: sphinxcontrib-fulltoc ; extra == 'dev'
+Requires-Dist: flake8 ; extra == 'dev'
+Requires-Dist: black ; (python_version >= "3.6") and extra == 'dev'
+Provides-Extra: mongo
+Requires-Dist: sanic-motor ; extra == 'mongo'
+Requires-Dist: pymongo ; extra == 'mongo'
+Provides-Extra: redis
+Requires-Dist: asyncio-redis ; extra == 'redis'
+
+# Sanic session management for humans
+[![ReadTheDocs](https://img.shields.io/readthedocs/sanic_session.svg)](https://sanic-session.readthedocs.io)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![PyPI version](https://img.shields.io/pypi/v/sanic_session.svg)](https://pypi.org/project/sanic_session/)
+
+:warning: Warning: This poject in Pull-Request-Only mode. I don't use Sanic anymore for any of my projects and will not make any changes by my own in foreseeable future. I recommend to use AIOHTTP since it more mature and have bigger adoption (I'm not judging by github stars only). Though I will accept pull requests from others if you want to see updates in the code. 
+
+`sanic_session` is session management extension for [Sanic](http://sanic.readthedocs.io/) that integrates server-backed sessions with most convenient API.
+
+`sanic_session` provides a number of *session interfaces* for you to store a client's session data. The interfaces available right now are:
+
+  * Redis (supports both drivers `aioredis` and `asyncio_redis`)
+  * Memcache (via `aiomcache`)
+  * Mongodb (via `sanic_motor` and `pymongo`)
+  * In-Memory (suitable for testing and development environments)
+
+## Installation
+
+Install with `pip` (there is other options for different drivers, check documentation):
+
+`pip install sanic_session`
+
+or if you prefer `Pipenv`:
+
+`pipenv install sanic_session`
+
+## Documentation
+
+Documentation is available at [sanic-session.readthedocs.io](http://sanic-session.readthedocs.io/en/latest/).
+
+Also, make sure you read [OWASP's Session Management Cheat Sheet](https://www.owasp.org/index.php/Session_Management_Cheat_Sheet) for some really useful info on session management.
+
+## Example
+
+A simple example uses the in-memory session interface.
+
+```python
+from sanic import Sanic
+from sanic.response import text
+from sanic_session import Session, InMemorySessionInterface
+
+app = Sanic()
+session = Session(app, interface=InMemorySessionInterface())
+
+@app.route("/")
+async def index(request):
+    # interact with the session like a normal dict
+    if not request.ctx.session.get('foo'):
+        request.ctx.session['foo'] = 0
+
+    request.ctx.session['foo'] += 1
+
+    return text(request.ctx.session['foo'])
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
+```
+
+Examples of using redis and memcache backed sessions can be found in the documentation, under [Using the Interfaces](http://sanic-session.readthedocs.io/en/latest/using_the_interfaces.html).
+
+<p align="center">&mdash; ⭐️ &mdash;</p>
+
+

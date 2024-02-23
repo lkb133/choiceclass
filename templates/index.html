@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chioce</title>
+    <link rel="stylesheet" type="text/css" href="../static/public.css">
+</head>
+<style>
+    body {
+        background-image: linear-gradient(to right, #fbc2eb, #a6c1ee);
+        margin: 0;
+    }
+
+    .top-left {
+        color: aliceblue;
+    }
+
+    .cursor {
+        cursor: pointer;
+    }
+
+    .flex-2 {
+        flex-grow: 2;
+        flex-shrink: 1;
+        flex-basis: 0;
+        background-color: #f0f0f0;
+    }
+
+    .flex-8 {
+        flex-grow: 8;
+        flex-shrink: 1;
+        flex-basis: 0;
+        background-color: #f0f0f0;
+    }
+</style>
+
+<body>
+    <div class="display-flex flex-direction-row justify-content-space-between"
+        style="background:#368AE2;min-height: 50px;border-color: #e7e7e7;">
+        <div class="display-flex top-left  align-items-center padding-left-10">
+            <div style="font-size: 20px;font-weight: bolder;">阿吧阿吧主页面</div>
+        </div>
+        <div class="display-flex top-left  align-items-center padding-10">
+            <div class="display-flex  justify-content-space-between">
+                <div id="username" class="padding-right-15 cursor" onclick="login()"
+                    style="font-size: 20px;font-weight: bolder;">登录</div>
+                <div class="padding-right-10 cursor" onclick="logon()" style="font-size: 20px;font-weight: bolder;">注册
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="display-flex">
+        <div class="flex-2">13</div>
+        <div class="flex-8">123</div>
+    </div>
+</body>
+
+<script>
+    fetch("http://localhost:8081/student")
+        .then(response => response.json())
+        .then(data => {
+            // 在这里处理数据
+            console.log(data.data[0].name);
+
+            // 数据显示在页面上
+            document.getElementById('username').innerText = '欢迎您，' + data.data[0].name + ' 同学';
+        })
+    function login() {
+        window.location.href = "./login.html"
+        fetch("http://localhost:8081/student")
+            .then(response => response.json())
+            .then(data => {
+                // 在这里处理数据
+                console.log(data);
+
+                // 数据显示在页面上
+                document.getElementById("data").innerText = JSON.stringify(data);
+            })
+    }
+    function logon() {
+        window.location.href = "./index.html"
+    }
+</script>
+
+</html>

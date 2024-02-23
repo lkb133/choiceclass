@@ -1,0 +1,7 @@
+{
+    "DATABASE": "choice",
+    "USERNAME": "root",
+    "PASSWORD": "Lkb0419",
+    "HOST": "localhost",
+    "PORT": 3306
+}

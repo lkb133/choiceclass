@@ -1,0 +1,177 @@
+<!-- 2024.2.17 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <link rel="stylesheet" type="text/css" href="../static/public.css">
+</head>
+
+<style>
+    body {
+        /* background-image: url("image/login/001.jpg");
+        background-repeat: no-repeat;
+        background-size: cover; */
+        background-image: linear-gradient(to right, #fbc2eb, #a6c1ee);
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        font-size: 30px;
+        font-weight: bold;
+        text-align: center;
+        /* line-height: 200px; */
+    }
+
+    .top {
+        font-size: 20px;
+        /* font-weight: lighter; */
+
+    }
+
+    .login {
+        width: 328px;
+        height: 508px;
+        background: white;
+    }
+
+    .id {
+        display: block;
+        width: 100%;
+        margin-bottom: 20px;
+        border: 0;
+        padding: 10px;
+        border-bottom: 1px solid rgb(128, 125, 125);
+        font-size: 15px;
+        outline: none;
+        margin: 40px;
+    }
+
+    .btn {
+        text-align: center;
+        padding: 10px;
+        background-image: linear-gradient(to right, #a6c1ee, #fbc2eb);
+        color: #fff;
+        margin: 20px;
+        cursor: pointer;
+        /* 添加鼠标指针样式 */
+        border: none;
+        outline: none;
+    }
+
+    .btn:hover {
+        background-image: linear-gradient(to right, #fbc2eb, #a6c1ee);
+        /* 鼠标悬停时改变背景颜色 */
+    }
+
+    .btn:active {
+        transform: scale(0.95);
+        /* 按下时缩小按钮 */
+    }
+
+    .btn:focus {
+        box-shadow: 0 0 0 2px #a6c1ee;
+        /* 获取焦点时添加边框 */
+    }
+
+    .forgetpassword {
+        flex-grow: 1;
+        text-align: center;
+        cursor: pointer;
+        text-decoration: underline;
+        color: cadetblue;
+    }
+</style>
+
+<body>
+    <div class="height-100 width-100 display-flex flex-direction-column">
+        <div class="display-flex ">
+            <div class="top ">学生选修课系统 </div>
+        </div>
+        <div class="display-flex justify-content-center width-100 height-100">
+            <div class="border-radius-15 login">
+                <div class="display-flex justify-content-center flex-direction-column">
+                    <div class="display-flex justify-content-center header ">学生登录</div>
+                    <div class="display-flex justify-content-center flex-direction-row">
+                        <input class="id" id="username" type="text" placeholder="帐号">
+                    </div>
+                    <div class="display-flex justify-content-center flex-direction-row">
+                        <input class="id" id="password" type="password" placeholder="密码">
+                    </div>
+                    <div class="btn" onclick="login()">登录</div>
+                    <div class="display-flex ">
+                        <div class="forgetpassword">注册</div>
+                        <div class="forgetpassword" onclick="forgetpassword()">忘记密码</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+
+    let i = 0;
+    fetch("http://localhost:8081/login")
+        .then(response => response.json())
+        .then(data => {
+            // 在这里处理数据
+            console.log(data)
+        })
+        .catch(error => console.error(error))
+    // function if_login(py_data, data) {
+    //     console.log(py_data.data[0])
+    //     console.log(data.username)
+    //     if (py_data.data[i].id == data.username && py_data.data[i].password == data.password && py_data.data[i].length > 0) {
+    //         return true
+    //     }
+    //     else {
+    //         if (py_data.data[i].id !== '' && py_data.data[i].password !== '') {
+    //             i++
+    //             return if_login(data)
+    //         }
+    //         else {
+    //             return false
+    //         }
+    //     }
+    // }
+
+    function login() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        var data = {
+            "username": username,
+            "password": password,
+        }
+        console.log(JSON.stringify(data))
+        fetch("http://localhost:8081/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    window.location.href = "./index.html"
+                    console.log("Success")
+                }
+                else {
+                    console.log("Failed")
+                    alert('帐号或密码错误')
+                }
+            }).catch(error => {
+                console.log("Error sending data: ", error)
+            })
+
+    }
+    function forgetpassword() {
+        window.location.href = "./forgetpassword.html"
+    }
+
+</script>
