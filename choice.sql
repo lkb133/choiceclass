@@ -11,7 +11,7 @@
  Target Server Version : 80035 (8.0.35-0ubuntu0.22.04.1)
  File Encoding         : 65001
 
- Date: 22/02/2024 14:39:11
+ Date: 02/03/2024 22:26:56
 */
 
 SET NAMES utf8mb4;
@@ -83,7 +83,7 @@ CREATE TABLE `login` (
 -- Records of login
 -- ----------------------------
 BEGIN;
-INSERT INTO `login` (`id`, `password`) VALUES (1001, 123456);
+INSERT INTO `login` (`id`, `password`) VALUES (1001, 123123);
 INSERT INTO `login` (`id`, `password`) VALUES (1002, 123456);
 INSERT INTO `login` (`id`, `password`) VALUES (1003, 123456);
 INSERT INTO `login` (`id`, `password`) VALUES (1004, 123456);
@@ -132,6 +132,7 @@ BEGIN;
 INSERT INTO `score` (`stu_id`, `cou_id`, `tea_id`, `totalscore`, `timescore`, `textscore`) VALUES (1, 1, 1, 13, 2, 20);
 INSERT INTO `score` (`stu_id`, `cou_id`, `tea_id`, `totalscore`, `timescore`, `textscore`) VALUES (1001, 1, 101, NULL, NULL, NULL);
 INSERT INTO `score` (`stu_id`, `cou_id`, `tea_id`, `totalscore`, `timescore`, `textscore`) VALUES (1002, 2, 101, NULL, NULL, NULL);
+INSERT INTO `score` (`stu_id`, `cou_id`, `tea_id`, `totalscore`, `timescore`, `textscore`) VALUES (1003, 1, 1, 100, 10, 10);
 COMMIT;
 
 -- ----------------------------
@@ -206,6 +207,22 @@ END
 delimiter ;
 
 -- ----------------------------
+-- Procedure structure for score_all
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `score_all`;
+delimiter ;;
+CREATE PROCEDURE `score_all`(IN stu_id INT, IN cou_id INT)
+BEGIN
+    IF cou_id = -1 THEN
+        SELECT timescore, textscore, totalscore FROM score WHERE cou_id = cou_id;
+    ELSE
+        SELECT timescore, textscore, totalscore FROM score WHERE stu_id = stu_id AND cou_id = cou_id;
+    END IF;
+END
+;;
+delimiter ;
+
+-- ----------------------------
 -- Procedure structure for score_insert
 -- ----------------------------
 DROP PROCEDURE IF EXISTS `score_insert`;
@@ -264,6 +281,20 @@ END
 delimiter ;
 
 -- ----------------------------
+-- Procedure structure for stu_score
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `stu_score`;
+delimiter ;;
+CREATE PROCEDURE `stu_score`(IN down INT , IN up INT)
+BEGIN
+    SELECT student.stu_id, student.stu_name, score.totalscore, score.timescore, score.textscore FROM student INNER JOIN score ON student.stu_id = score.stu_id
+WHERE score.totalscore >= down AND score.totalscore <= up;
+select down,up;
+END
+;;
+delimiter ;
+
+-- ----------------------------
 -- Procedure structure for teacher_insert
 -- ----------------------------
 DROP PROCEDURE IF EXISTS `teacher_insert`;
@@ -281,8 +312,14 @@ delimiter ;
 DROP TRIGGER IF EXISTS `totalscore_update`;
 delimiter ;;
 CREATE TRIGGER `totalscore_update` BEFORE UPDATE ON `score` FOR EACH ROW BEGIN
-	SET new.totalscore=new.timescore*0.4+new.textscore*0.6;
-END
+	declare total int;
+	set total=new.timescore*0.4+new.textscore*0.6;
+	if total<=100 and total>=0 then
+		set new.totalscore=total;
+	else  
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Total score must be between 0 and 100';
+	end if;
+	END
 ;;
 delimiter ;
 

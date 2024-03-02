@@ -64,23 +64,20 @@ class Insert:
     def insert_data(self, db, fun_name, args_one=None, args_two=None, args_three=None):
         try:
             print(db)
-            cursor = db.cursor()
+            cursor = db.cursor()  # 设置游标
             print(args_three, args_two, args_one)
             if args_two is None:
                 print(1)
-                cursor.callproc(fun_name, args=(args_one))
-                print("ok")
-                return cursor.fetchone()
+                cursor.callproc(fun_name, args=(args_one))  # 调用的sql一个函数
             elif args_three is None:
                 print(2)
                 cursor.callproc(fun_name, args=(args_one, args_two))
-                print("ok")
-                return cursor.fetchone()
             else:
                 print(3)
                 cursor.callproc(fun_name, args=(args_one, args_two, args_three))
-                print("ok")
-                return cursor.fetchone()
+            db.commit()
+            print("ok")
+            return cursor.fetchone()
         except Exception as e:
             print("Error adding data to MySQL:", e)
             return json({"error": "Error adding data"}, status=500)

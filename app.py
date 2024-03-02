@@ -12,6 +12,7 @@ from tools import (
     pd_dict_login,
     pd_dict_major,
     pd_dict_tea,
+    pd_dict_score_tea,
 )
 from server import BaseView, Select, Insert
 import json as json
@@ -34,7 +35,7 @@ def get_json(filename):
 @app.listener("before_server_start")
 async def create_connect(app, loop):
     data_json = get_json("./config.json")
-    app.ctx.db = await get_sql(
+    app.ctx.db = get_sql(
         data_json["USERNAME"],
         data_json["PASSWORD"],
         data_json["HOST"],
@@ -76,10 +77,20 @@ class Service:
             data = pd_dict_tea(data)
             return self.success(data)
 
+        async def score_stu_all(self, resquest):
+            sql = "CALL stu_score(%s,%s)"
+            cursor = app.ctx.db.cursor()
+            cursor.execute(sql, (1, 100))
+            results = cursor.fetchall()
+            print(results)
+            results = pd_dict_score_tea(results)
+            return self.success(results)
+
     class Login(BaseView):
         async def get(request):
             sql = "SELECT * FROM login"
             data = Select.select_data(app.ctx.db, sql)
+            print(data)
             data = pd_dict_login(data)
             return Service.Login.success(data)
 
@@ -104,6 +115,7 @@ class Service:
             sql_data = app.ctx.db.cursor()
             sql_data.execute(sql, (data["username"]))
             sql_data = sql_data.fetchall()
+            print(sql_data)
             sql_data = pd_dict_login(sql_data)
             sql_data_password = str(sql_data[0]["password"])
             if data["password"] == sql_data_password:
@@ -118,12 +130,13 @@ class Service:
 
     class Score(BaseView):
         async def get(self, request):
-            sql = "SELECT * FROM score"
+            sql = "CALL score_all(%s,%s)"
             cursor = app.ctx.db.cursor()
-            cursor.callproc("score_all", args=("1", "1"))
-            results = cursor.fetchone()
+            cursor.execute(sql, (1, 1))
+            results = (cursor.fetchone(),)
             print(results)
-            return self.success({"data": "123"})
+            results = pd_dict_score(results)
+            return self.success(results)
 
     class Student(BaseView):
         async def get(self, request):
@@ -134,17 +147,46 @@ class Service:
             sql_data.execute(sql, (user_data))
             sql_data = sql_data.fetchall()
             sql_data = pd_dict_stu(sql_data)
-            print(sql_data)
             return self.success(sql_data)
 
+    class Course(BaseView):
+        async def get(self, request):
+            sql = "SELECT * FROM course"
+            data = Select.select_data(app.ctx.db, sql)
+            data = pd_dict_course(data)
+            return self.success(data)
 
-app.add_route(Service.Login.get, "/login/get")
-app.add_route(Service.Login.update_password, "/login/update_password")
-app.add_route(Service.Login.as_view(), "/login")
-app.add_route(Service.Teacher.as_view(), "/teacher")
-app.add_route(Service.Score.as_view(), "/score")
-app.add_route(Service.Student.as_view(), "/student", methods=["GET", "POST"])
-app.add_route(Service.Index.as_view(), "/")
+
+router_list = [
+    ("/", Service.Index),
+    ("/login", Service.Login),
+    ("/score", Service.Score),
+    ("/course", Service.Course),
+    ("/teacher", Service.Teacher),
+    ("/student", Service.Student),
+    ("/login/get", Service.Login.get),
+    ("/login/update_password", Service.Login.update_password, ["POST", "PUT"]),
+]
+
+for item in router_list:
+    if len(item) == 2:
+        (path, View, methods) = (*item, ["get"])
+    elif len(item) == 3:
+        (path, View, methods) = item
+    if View.__class__.__name__ == "type":
+        app.add_route(View.as_view(), path)
+    elif View.__class__.__name__ == "function":
+        app.add_route(View, path, methods)
+
+# app.add_route(Service.Login.get, "/login/get")
+# app.add_route(
+#     Service.Login.update_password, "/login/update_password", methods=["POST", "PUT"]
+# )
+# app.add_route(Service.Login.as_view(), "/login")
+# app.add_route(Service.Teacher.as_view(), "/teacher")
+# app.add_route(Service.Score.as_view(), "/score")
+# app.add_route(Service.Student.as_view(), "/student", methods=["GET", "POST"])
+# app.add_route(Service.Index.as_view(), "/")
 
 
 if __name__ == "__main__":

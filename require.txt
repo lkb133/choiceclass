@@ -1,3 +1,4 @@
 pandas
 sanic
 pymysql
+jinja2

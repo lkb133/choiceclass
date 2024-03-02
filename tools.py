@@ -3,6 +3,7 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 from functools import wraps
 from sanic.response import html
+import json
 
 
 env = Environment(loader=FileSystemLoader("./templates/"), enable_async=True)
@@ -24,7 +25,7 @@ class Before:
         return warapper
 
 
-async def get_sql(username, password, host="", port="", database=""):
+def get_sql(username, password, host="", port="", database=""):
     try:
         data = sql.connect(
             user=username, password=password, host=host, port=port, database=database
@@ -62,12 +63,21 @@ def pd_dict_tea(data_list):
 def pd_dict_college(data_list):
     data = pd.DataFrame(data_list, columns=["id", "name"])
     data = data.to_dict(orient="records")
+    data = json.dumps(data, indent=4, ensure_ascii=False, default=str)
+    print(data)
     return data
 
 
 def pd_dict_course(data_list):
+    new_data = []
+    for data in data_list:
+        if data[4].__class__.__name__ == "date":
+            tem = str(data[4].day) + "-" + str(data[4].month) + "-" + str(data[4].year)
+            data = data[:4] + (tem,) + data[-1:]
+            new_data.append(data)
+    new_data = tuple(new_data)
     data = pd.DataFrame(
-        data_list, columns=["id", "name", "credit", "hour", "begintime", "address"]
+        new_data, columns=["id", "name", "credit", "hour", "begintime", "address"]
     )
     data = data.to_dict(orient="records")
     return data
@@ -76,6 +86,7 @@ def pd_dict_course(data_list):
 def pd_dict_login(data_list):
     data = pd.DataFrame(data_list, columns=["id", "password"])
     data = data.to_dict(orient="records")
+    print(data)
     return data
 
 
@@ -86,7 +97,27 @@ def pd_dict_major(data_list):
 
 
 def pd_dict_score(data_list):
-    pass
+    print(data_list)
+    data = pd.DataFrame(data_list, columns=["timescore", "textscore", "totalscore"])
+    data = data.to_dict(orient="records")
+    return data
+
+
+def pd_dict_score_tea(data_list):
+    print(data_list)
+    # student.stu_id, student.stu_name, score.totalscore, score.timescore, score.textscore
+    data = pd.DataFrame(
+        data_list,
+        columns=[
+            "id",
+            "name",
+            "totalscore",
+            "timescore",
+            "textscore",
+        ],
+    )
+    data = data.to_dict(orient="records")
+    return data
 
 
 def close_sql(data: sql):
