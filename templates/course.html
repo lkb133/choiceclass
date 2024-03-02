@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>course</title>
+    <link rel="stylesheet" type="text/css" href="../static/public.css">
+</head>
+<style>
+    body {
+        width: 100%;
+        margin: 0;
+        height: 560px;
+    }
+
+    .top-content {
+        font-size: 30px;
+        font-weight: bolder;
+        text-align: center;
+        padding-bottom: 10px;
+    }
+
+    .flex1 {
+        flex: 1;
+    }
+
+    .flex-2 {
+        flex-grow: 2;
+    }
+
+    .flex-8 {
+        flex-grow: 8;
+    }
+</style>
+
+<body>
+    <div class="display-flex flex-direction-column">
+        <div class="top-content">课程信息</div>
+        <div class="display-flex flex-direction-column" style="margin: 10px 15% 0 15%;">
+            <div class="display-flex flex-direction-column">
+                <div class="display-flex flex-direction-row flex-2" id="table-top">
+
+                </div>
+                <div class="display-flex flex-direction-row flex-8">
+                    <div class="flex1 display-flex flex-direction-column" id='course-id'></div>
+                    <div class="flex1 display-flex flex-direction-column" id="course-name"></div>
+                    <div class="flex1 display-flex flex-direction-column" id="course-credit"></div>
+                    <div class="flex1 display-flex flex-direction-column" id="course-hour"></div>
+                    <div class="flex1 display-flex flex-direction-column" id="course-begintime"></div>
+                    <div class="flex1 display-flex flex-direction-column" id="course-address"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    var tablelist = ['课程编号', '课程名', '学分', '学时', '开课时间', '开课地点']
+    const table = document.getElementById('table-top')
+    tablelist.forEach(tablelist => {
+        const dive = document.createElement('div')
+        dive.textContent = tablelist
+        dive.classList.add('flex1')
+        table.appendChild(dive)
+    })
+    fetch("http://localhost:8081/course").then(resp => resp.json()).then(data => {
+        var id = []
+        var name = []
+        var credit = []
+        var hour = []
+        var begintime = []
+        var address = []
+        var box = ['course-id', 'course-name', 'course-credit', 'course-hour', 'course-begintime', 'course-address']
+        for (var i = 0; i < data.data.length; i++) {
+            id[i] = data.data[i].id
+            name[i] = data.data[i].name
+            credit[i] = data.data[i].credit
+            hour[i] = data.data[i].hour
+            begintime[i] = data.data[i].begintime
+            address[i] = data.data[i].address
+        }
+        var all = [id, name, credit, hour, begintime, address]
+        for (var i = 0; i < box.length; i++) {
+            const table_id = document.getElementById(box[i])
+            all[i].forEach(id => {
+                const dive = document.createElement('div')
+                dive.textContent = id
+                dive.classList.add('flex1')
+                table_id.appendChild(dive)
+            })
+        }
+    })
+
+</script>

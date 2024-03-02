@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>student</title>
+    <link rel="stylesheet" type="text/css" href="../static/public.css">
+</head>
+<style>
+    body {
+        width: 100%;
+        margin: 0;
+        height: 560px;
+    }
+
+    .top-content {
+        font-size: 30px;
+        font-weight: bolder;
+        text-align: center;
+        padding-bottom: 10px;
+    }
+
+    .stu_content {
+        font-size: 20px;
+        text-align: center;
+        /* background: blue; */
+        margin: 10px;
+    }
+</style>
+
+<body>
+    <div class="display-flex flex-direction-column justify-content-center" style="padding: 0 2% 0 2%;">
+        <div class="top-content"> 学生信息</div>
+        <div class="display-flex flex-direction-column justify-content-center">
+            <div class="display-flex flex-directon-row justify-content-center">
+                <div class="stu_content">头像:</div>
+                <img src="" alt="" style="width: 100px;height: 100px;">
+            </div>
+            <div class="display-flex flex-directon-row justify-content-center">
+                <div class="stu_content">姓名:</div>
+                <div class="stu_content" id="name">name</div>
+                <div class="stu_content">性别:</div>
+                <div class="stu_content" id="sex">sex</div>
+            </div>
+            <div class="display-flex flex-directon-row justify-content-center" style="margin-left: -10px;">
+                <div class="stu_content">年龄:</div>
+                <div class="stu_content" id="age">age</div>
+            </div>
+            <div class="display-flex flex-directon-row justify-content-center">
+                <div class="stu_content">学号:</div>
+                <div class="stu_content" id="id">id</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+    fetch('http://localhost:8081/student').then(response => response.json()).then(data => {
+        console.log(data)
+        console.log(data.data.length)
+        if (data.data.length > 0) {
+            document.getElementById('name').innerText = data.data[0].name
+            document.getElementById('sex').innerText = data.data[0].sex
+            document.getElementById('age').innerText = data.data[0].age
+            document.getElementById('id').innerText = data.data[0].id
+        }
+
+    })
+</script>

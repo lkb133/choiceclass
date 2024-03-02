@@ -9,7 +9,7 @@
 </head>
 <style>
     body {
-        background-image: linear-gradient(to right, #fbc2eb, #a6c1ee);
+        background: #e7e7e7;
         margin: 0;
     }
 
@@ -34,6 +34,18 @@
         flex-basis: 0;
         background-color: #f0f0f0;
     }
+
+    .menu {
+        margin-top: 10px;
+        padding: 3px;
+        border: 3px solid gray;
+        border-radius: 5px;
+        width: 100%;
+        height: 100%;
+        background: rgb(145, 144, 144);
+        display: flex;
+        justify-content: center;
+    }
 </style>
 
 <body>
@@ -51,10 +63,25 @@
             </div>
         </div>
     </div>
-    <div class="display-flex">
-        <div class="flex-2">13</div>
-        <div class="flex-8">123</div>
+    <div class="display-flex margin-top-10 ">
+        <div class="flex-2 flex-direction-row" style="overflow-y: auto;background:#e7e7e7;">
+            <div class="display-flex flex-direction-column justify-content-center padding-15 ">
+                <a class="menu" href="student.html" target="htmlfrom"
+                    style="color: #f0f0f0;text-decoration: none;">学生信息</a>
+                <a class="menu" href="course.html" target="htmlfrom"
+                    style="color: #f0f0f0;text-decoration: none;">课程信息</a>
+                <a class="menu" href="img.html" target="htmlfrom" style="color: #f0f0f0;text-decoration: none;">选课</a>
+                <a class="menu" href="score.html" target="htmlfrom"
+                    style="color: #f0f0f0;text-decoration: none;">123</a>
+            </div>
+
+        </div>
+        <div class="flex-8">
+            <iframe name="htmlfrom" style="width: 100%;height: 560px;border: 0; margin-bottom: -5px;" scrolling="auto"
+                id="htmlfrom"></iframe>
+        </div>
     </div>
+    <div style="background:blue;height: 10px;width: 100%; border: 0;"></div>
 </body>
 
 <script>
@@ -82,6 +109,8 @@
     function logon() {
         window.location.href = "./index.html"
     }
+
+
 </script>
 
 </html>
